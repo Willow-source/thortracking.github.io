@@ -122,10 +122,23 @@ def main():
     for name, entry in results.items():
         print(f"  {name}: {entry['range']} (batch {entry['batch_date']})")
 
+    # Output in the same order as the community section
+    canonical_order = [
+        "Thor ⚪ Pro", "Thor ⚪ Max",
+        "Thor 🌈 Pro", "Thor 🌈 Max",
+        "Thor 🟣 Pro", "Thor 🟣 Max",
+        "Thor ⚫ Pro", "Thor ⚫ Max",
+        "Thor ⚫ Lite", "Thor ⚫ Base",
+    ]
+    ordered = [results[n] for n in canonical_order if n in results]
+    # Append any unrecognised variants at the end
+    known = set(canonical_order)
+    ordered += [v for n, v in results.items() if n not in known]
+
     output = {
         "fetched_at": datetime.now(timezone.utc).isoformat(),
         "source":     DASHBOARD_URL,
-        "variants":   list(results.values()),
+        "variants":   ordered,
     }
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
