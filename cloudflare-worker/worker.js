@@ -81,7 +81,15 @@ async function handleUpdate(request, env) {
 
   const fileData = await fileRes.json();
   const sha = fileData.sha;
-  const current = JSON.parse(atob(fileData.content.replace(/\n/g, '')));
+
+  // Decode base64 content properly preserving UTF-8 emojis
+  const decoded = decodeURIComponent(
+    atob(fileData.content.replace(/\n/g, ''))
+      .split('')
+      .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+      .join('')
+  );
+  const current = JSON.parse(decoded);
 
   // Merge new entry
   const now = timestamp || new Date().toISOString();
@@ -103,8 +111,14 @@ async function handleUpdate(request, env) {
 
   current.last_updated = now;
 
-  // Commit back to GitHub
-  const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2))));
+  // Encode back to base64 properly preserving UTF-8 emojis
+  const jsonString = JSON.stringify(current, null, 2);
+  const newContent = btoa(
+    encodeURIComponent(jsonString).replace(/%([0-9A-F]{2})/g, (_, p1) =>
+      String.fromCharCode(parseInt(p1, 16))
+    )
+  );
+
   const commitRes = await fetch(fileUrl, {
     method: 'PUT',
     headers: { ...headers, 'Content-Type': 'application/json' },
