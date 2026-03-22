@@ -11,18 +11,28 @@
 
 const DATA_PATH = 'data/community.json';
 
+const ALLOWED_VARIANTS = [
+  'Thor ⚪ Pro',
+  'Thor ⚪ Max',
+  'Thor 🌈 Pro',
+  'Thor 🌈 Max',
+  'Thor 🟣 Pro',
+  'Thor 🟣 Max',
+  'Thor ⚫ Pro',
+  'Thor ⚫ Max',
+  'Thor ⚫ Lite',
+  'Thor ⚫ Base'
+];
+
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') {
       return corsResponse(null, 204, env);
     }
-
     const url = new URL(request.url);
-
     if (request.method === 'POST' && url.pathname === '/update') {
       return handleUpdate(request, env);
     }
-
     return corsResponse(JSON.stringify({ error: 'Not found' }), 404, env);
   }
 };
@@ -47,8 +57,7 @@ async function handleUpdate(request, env) {
     return corsResponse(JSON.stringify({ error: 'Missing required fields' }), 400, env);
   }
 
-  const allowedVariants = ['White Max', 'Black Pro', 'White Pro', 'Black Standard'];
-  if (!allowedVariants.includes(variant)) {
+  if (!ALLOWED_VARIANTS.includes(variant)) {
     return corsResponse(JSON.stringify({ error: 'Invalid variant' }), 400, env);
   }
 
