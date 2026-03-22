@@ -45,13 +45,7 @@
       background-size: 40px 40px;
       pointer-events: none;
     }
-
-    .container {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-    }
-
+    .container { position: relative; width: 100%; max-width: 600px; }
     .back {
       font-family: var(--mono);
       font-size: 0.72rem;
@@ -64,7 +58,6 @@
       transition: color 0.2s;
     }
     .back:hover { color: var(--orange); }
-
     #login-panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -72,7 +65,6 @@
       padding: 40px;
     }
     #admin-panel { display: none; }
-
     .panel-title {
       font-family: var(--head);
       font-size: 1.5rem;
@@ -88,7 +80,6 @@
       margin-bottom: 32px;
       line-height: 1.5;
     }
-
     label {
       display: block;
       font-family: var(--mono);
@@ -117,7 +108,6 @@
     }
     textarea { resize: vertical; min-height: 80px; font-size: 0.82rem; }
     select option { background: var(--surface2); }
-
     .btn {
       width: 100%;
       padding: 12px;
@@ -136,7 +126,6 @@
     .btn:hover { opacity: 0.9; }
     .btn:active { transform: scale(0.99); }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .btn-secondary {
       background: transparent;
       color: var(--text-dim);
@@ -144,7 +133,6 @@
       margin-top: 10px;
     }
     .btn-secondary:hover { border-color: var(--orange); color: var(--orange); opacity: 1; }
-
     .alert {
       padding: 12px 16px;
       border-radius: 7px;
@@ -156,7 +144,6 @@
     .alert.error { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
     .alert.success { background: rgba(57,217,138,0.08); border: 1px solid rgba(57,217,138,0.3); color: var(--green); }
     .alert.show { display: block; }
-
     .field-group {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -172,7 +159,6 @@
       text-transform: uppercase;
       margin-bottom: 16px;
     }
-
     .preview {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -195,7 +181,6 @@
       white-space: pre-wrap;
       word-break: break-all;
     }
-
     .spinner-inline {
       display: inline-block;
       width: 12px; height: 12px;
@@ -207,7 +192,6 @@
       margin-right: 6px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .instructions {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -231,12 +215,9 @@
   <div id="login-panel">
     <div class="panel-title">Admin <span>Access</span></div>
     <div class="panel-sub">This page is for verified community trackers only. Enter your credentials to submit a shipping update.</div>
-
     <div id="login-alert" class="alert error"></div>
-
     <label>Admin Password</label>
     <input type="password" id="password-input" placeholder="Enter password…" autocomplete="current-password" />
-
     <button class="btn" onclick="attemptLogin()">Authenticate →</button>
   </div>
 
@@ -244,7 +225,6 @@
   <div id="admin-panel">
     <div class="panel-title">Submit <span>Update</span></div>
     <div class="panel-sub">Enter the verified order numbers from Discord. All updates are logged with your Discord handle and timestamp.</div>
-
     <div id="submit-alert" class="alert"></div>
 
     <div class="field-group">
@@ -257,17 +237,23 @@
       <div class="field-group-title">// Shipping Update</div>
       <label>Variant</label>
       <select id="variant">
-        <option value="White Max">White Max</option>
-        <option value="Black Pro">Black Pro</option>
-        <option value="White Pro">White Pro</option>
-        <option value="Black Standard">Black Standard</option>
+        <option value="Thor ⚪ Pro">Thor ⚪ Pro (White Pro)</option>
+        <option value="Thor ⚪ Max">Thor ⚪ Max (White Max)</option>
+        <option value="Thor 🌈 Pro">Thor 🌈 Pro (Rainbow Pro)</option>
+        <option value="Thor 🌈 Max">Thor 🌈 Max (Rainbow Max)</option>
+        <option value="Thor 🟣 Pro">Thor 🟣 Pro (Purple Pro)</option>
+        <option value="Thor 🟣 Max">Thor 🟣 Max (Purple Max)</option>
+        <option value="Thor ⚫ Pro">Thor ⚫ Pro (Black Pro)</option>
+        <option value="Thor ⚫ Max">Thor ⚫ Max (Black Max)</option>
+        <option value="Thor ⚫ Lite">Thor ⚫ Lite (Black Lite)</option>
+        <option value="Thor ⚫ Base">Thor ⚫ Base (Black Base)</option>
       </select>
 
       <label>Shipped Up To Order #</label>
-      <input type="text" id="order-number" placeholder="e.g. 10450" />
+      <input type="text" id="order-number" placeholder="e.g. 1658" />
 
       <label>Notes (optional)</label>
-      <textarea id="notes" placeholder="e.g. Confirmed via batch email screenshot · Source: AYN Discord #shipping-updates"></textarea>
+      <textarea id="notes" placeholder="e.g. Confirmed via label/shipped email · Source: AYN Discord #shipping-updates"></textarea>
     </div>
 
     <button class="btn" id="submit-btn" onclick="submitUpdate()">Submit Update</button>
@@ -280,7 +266,7 @@
 
     <div class="instructions">
       <strong>How this works:</strong><br />
-      Your update is sent via the Cloudflare Worker to the GitHub repo's <code>data/community.json</code> file. The site rebuilds automatically within ~30 seconds. Make sure order numbers are verified before submitting — check the pinned messages in Discord's shipping channel.
+      Your update is sent via the Cloudflare Worker to the GitHub repo's <code>data/community.json</code> file. The site rebuilds automatically within ~30 seconds. Make sure order numbers are verified before submitting — check label/shipped emails and pinned messages in Discord.
       <br /><br />
       <strong>Not working?</strong> Contact the repo owner on <a href="https://github.com/willow-source/thortracking.github.io" target="_blank">GitHub</a>.
     </div>
@@ -288,15 +274,13 @@
 </div>
 
 <script>
-  // ─── CONFIGURATION ────────────────────────────────────────────────
   const WORKER_URL = 'https://thor-tracker-worker.joshancox.workers.dev/update';
   const URL_TOKEN  = 'fC3JR49ZbbqKyngJ';
   const ADMIN_PASSWORD_HASH = 'df6fadca0a2ba94d6bc87a75cba9042639cbee4da84a2b6ca14f89720c467db4';
-  // ─────────────────────────────────────────────────────────────────
 
   let authenticated = false;
+  let cachedPasswordHash = null;
 
-  // Check secret URL token on load
   (function checkToken() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('token') !== URL_TOKEN) {
@@ -317,6 +301,7 @@
       showAlert('login-alert', 'error', 'Incorrect password.');
       return;
     }
+    cachedPasswordHash = hash;
     authenticated = true;
     document.getElementById('login-panel').style.display = 'none';
     document.getElementById('admin-panel').style.display = 'block';
@@ -358,11 +343,10 @@
     btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
 
     try {
-      const hash = await sha256(document.getElementById('password-input')?.value || '');
       const res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...entry, password_hash: hash })
+        body: JSON.stringify({ ...entry, password_hash: cachedPasswordHash })
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Worker returned ' + res.status);
@@ -387,6 +371,7 @@
 
   function logout() {
     authenticated = false;
+    cachedPasswordHash = null;
     document.getElementById('password-input').value = '';
     document.getElementById('admin-panel').style.display = 'none';
     document.getElementById('login-panel').style.display = 'block';
