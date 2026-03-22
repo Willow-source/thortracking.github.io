@@ -1,22 +1,18 @@
 /**
  * AYN Thor Tracker — Cloudflare Worker
  *
- * Receives POST /update from admin.html
- * Reads community.json from GitHub, merges the new entry, commits back
- *
  * Environment variables to set in Cloudflare dashboard:
- *   GITHUB_TOKEN   — Personal Access Token with repo write scope
- *   GITHUB_OWNER   — e.g. Tartarsause117
- *   GITHUB_REPO    — e.g. thor-tracker
- *   ADMIN_PASSWORD_HASH — SHA-256 hex of the admin password
- *   ALLOWED_ORIGIN — e.g. https://tartarsause117.github.io
+ *   GITHUB_TOKEN         — Personal Access Token with repo Contents write scope
+ *   GITHUB_OWNER         — willow-source
+ *   GITHUB_REPO          — thortracking.github.io
+ *   ADMIN_PASSWORD_HASH  — df6fadca0a2ba94d6bc87a75cba9042639cbee4da84a2b6ca14f89720c467db4
+ *   ALLOWED_ORIGIN       — https://willow-source.github.io
  */
 
 const DATA_PATH = 'data/community.json';
 
 export default {
   async fetch(request, env) {
-    // CORS preflight
     if (request.method === 'OPTIONS') {
       return corsResponse(null, 204, env);
     }
@@ -41,12 +37,12 @@ async function handleUpdate(request, env) {
 
   const { variant, shipped_up_to, notes, updated_by, timestamp, password_hash } = body;
 
-  // ── Server-side password check ──
+  // Server-side password check
   if (password_hash !== env.ADMIN_PASSWORD_HASH) {
     return corsResponse(JSON.stringify({ error: 'Unauthorized' }), 401, env);
   }
 
-  // ── Validate ──
+  // Validate fields
   if (!variant || !shipped_up_to || !updated_by) {
     return corsResponse(JSON.stringify({ error: 'Missing required fields' }), 400, env);
   }
@@ -61,7 +57,7 @@ async function handleUpdate(request, env) {
     return corsResponse(JSON.stringify({ error: 'Invalid order number' }), 400, env);
   }
 
-  // ── Fetch current data.json from GitHub ──
+  // Fetch current community.json from GitHub
   const fileUrl = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${DATA_PATH}`;
   const headers = {
     'Authorization': `token ${env.GITHUB_TOKEN}`,
@@ -73,14 +69,14 @@ async function handleUpdate(request, env) {
   if (!fileRes.ok) {
     return corsResponse(JSON.stringify({ error: 'Failed to fetch data from GitHub: ' + fileRes.status }), 500, env);
   }
+
   const fileData = await fileRes.json();
   const sha = fileData.sha;
   const current = JSON.parse(atob(fileData.content.replace(/\n/g, '')));
 
-  // ── Merge new entry ──
+  // Merge new entry
   const now = timestamp || new Date().toISOString();
 
-  // Update variant card
   const variantIdx = current.variants.findIndex(v => v.name === variant);
   if (variantIdx >= 0) {
     current.variants[variantIdx].shipped_up_to = orderNum;
@@ -88,7 +84,6 @@ async function handleUpdate(request, env) {
     current.variants[variantIdx].updated = now;
   }
 
-  // Append to history
   current.history.push({
     variant,
     shipped_up_to: orderNum,
@@ -99,7 +94,7 @@ async function handleUpdate(request, env) {
 
   current.last_updated = now;
 
-  // ── Commit back to GitHub ──
+  // Commit back to GitHub
   const newContent = btoa(unescape(encodeURIComponent(JSON.stringify(current, null, 2))));
   const commitRes = await fetch(fileUrl, {
     method: 'PUT',
