@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracker Admin · AYN Thor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-glow: rgba(255,107,0,0.25);
+      --bg: #0a0a0b;
+      --surface: #111113;
+      --surface2: #18181c;
+      --border: #2a2a30;
+      --text: #e8e8e8;
+      --text-dim: #888;
+      --text-muted: #444;
+      --green: #39d98a;
+      --red: #f87171;
+      --mono: 'Share Tech Mono', monospace;
+      --head: 'Rajdhani', sans-serif;
+      --body: 'Exo 2', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 16px 80px;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .back {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      transition: color 0.2s;
+    }
+    .back:hover { color: var(--orange); }
+
+    /* Login panel */
+    #login-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px;
+    }
+    #admin-panel { display: none; }
+
+    .panel-title {
+      font-family: var(--head);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .panel-title span { color: var(--orange); }
+    .panel-sub {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.88rem;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      margin-bottom: 20px;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+    }
+    textarea { resize: vertical; min-height: 80px; font-size: 0.82rem; }
+    select option { background: var(--surface2); }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--orange);
+      color: #000;
+      font-family: var(--head);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:active { transform: scale(0.99); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      margin-top: 10px;
+    }
+    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); opacity: 1; }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 7px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .alert.error { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
+    .alert.success { background: rgba(57,217,138,0.08); border: 1px solid rgba(57,217,138,0.3); color: var(--green); }
+    .alert.show { display: block; }
+
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    .field-group {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .field-group-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--orange);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .preview {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+    }
+    .preview-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .preview pre {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .spinner-inline {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .instructions {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.7;
+    }
+    .instructions strong { color: var(--text); }
+    .instructions a { color: var(--orange); }
+  </style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html" class="back">← Back to tracker</a>
+
+  <!-- LOGIN PANEL -->
+  <div id="login-panel">
+    <div class="panel-title">Admin <span>Access</span></div>
+    <div class="panel-sub">This page is for verified community trackers only. Enter your credentials to submit a shipping update.</div>
+
+    <div id="login-alert" class="alert error"></div>
+
+    <label>Admin Password</label>
+    <input type="password" id="password-input" placeholder="Enter password…" autocomplete="current-password" />
+
+    <button class="btn" onclick="attemptLogin()">Authenticate →</button>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="admin-panel">
+    <div class="panel-title">Submit <span>Update</span></div>
+    <div class="panel-sub">Enter the verified order numbers from Discord. All updates are logged with your Discord handle and timestamp.</div>
+
+    <div id="submit-alert" class="alert"></div>
+
+    <div class="field-group">
+      <div class="field-group-title">// Your Details</div>
+      <label>Discord Username</label>
+      <input type="text" id="discord-user" placeholder="e.g. tracker#1234" />
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-title">// Shipping Update</div>
+      <label>Variant</label>
+      <select id="variant">
+        <option value="White Max">White Max</option>
+        <option value="Black Pro">Black Pro</option>
+        <option value="White Pro">White Pro</option>
+        <option value="Black Standard">Black Standard</option>
+      </select>
+
+      <label>Shipped Up To Order #</label>
+      <input type="text" id="order-number" placeholder="e.g. 10450" />
+
+      <label>Notes (optional)</label>
+      <textarea id="notes" placeholder="e.g. Confirmed via batch email screenshot · Source: AYN Discord #shipping-updates"></textarea>
+    </div>
+
+    <button class="btn" id="submit-btn" onclick="submitUpdate()">Submit Update</button>
+    <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+
+    <div class="preview" id="preview" style="display:none">
+      <div class="preview-title">// Preview JSON Entry</div>
+      <pre id="preview-content"></pre>
+    </div>
+
+    <div class="instructions">
+      <strong>How this works:</strong><br />
+      Your update is sent via the Cloudflare Worker to the GitHub repo's <code>data/community.json</code> file. The site rebuilds automatically within ~30 seconds. Make sure order numbers are verified before submitting — check the pinned messages in Discord's shipping channel.
+      <br /><br />
+      <strong>Not working?</strong> Contact the repo owner on <a href="https://github.com/Tartarsause117/thor-tracker" target="_blank">GitHub</a>.
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── CONFIGURATION ────────────────────────────────────────────────
+  // Set your Cloudflare Worker URL here after deploying
+  const WORKER_URL = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev/update';
+
+  // Secret URL token (optional extra layer) — set to '' to disable
+  // If set, the URL must include ?token=YOUR_SECRET_TOKEN
+  const URL_TOKEN = 'CHANGE_THIS_SECRET_URL_TOKEN';
+
+  // Admin password (hashed with SHA-256, set via worker env var ideally)
+  // This is a fallback client-side check only — real auth is in the Worker
+  const ADMIN_PASSWORD_HASH = 'REPLACE_WITH_SHA256_OF_YOUR_PASSWORD';
+  // ─────────────────────────────────────────────────────────────────
+
+  let authenticated = false;
+
+  // Check secret URL token on load
+  (function checkToken() {
+    if (!URL_TOKEN) return; // disabled
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('token') !== URL_TOKEN) {
+      document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;font-family:monospace;color:#444;font-size:0.8rem;">404 Not Found</div>';
+    }
+  })();
+
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  async function attemptLogin() {
+    const pw = document.getElementById('password-input').value.trim();
+    if (!pw) return showAlert('login-alert', 'error', 'Enter a password.');
+
+    const hash = await sha256(pw);
+    if (hash !== ADMIN_PASSWORD_HASH) {
+      showAlert('login-alert', 'error', 'Incorrect password.');
+      return;
+    }
+    authenticated = true;
+    document.getElementById('login-panel').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !authenticated) attemptLogin();
+  });
+
+  // Live preview
+  ['variant','order-number','discord-user','notes'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updatePreview);
+  });
+
+  function updatePreview() {
+    const entry = buildEntry();
+    if (!entry.shipped_up_to) {
+      document.getElementById('preview').style.display = 'none';
+      return;
+    }
+    document.getElementById('preview').style.display = 'block';
+    document.getElementById('preview-content').textContent = JSON.stringify(entry, null, 2);
+  }
+
+  function buildEntry() {
+    return {
+      variant: document.getElementById('variant').value,
+      shipped_up_to: document.getElementById('order-number').value.replace(/[^0-9]/g, ''),
+      notes: document.getElementById('notes').value.trim(),
+      updated_by: document.getElementById('discord-user').value.trim(),
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  async function submitUpdate() {
+    if (!authenticated) return;
+    const entry = buildEntry();
+
+    if (!entry.updated_by) return showAlert('submit-alert', 'error', 'Discord username required.');
+    if (!entry.shipped_up_to) return showAlert('submit-alert', 'error', 'Order number required.');
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
+
+    try {
+      const res = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Worker returned ' + res.status);
+      showAlert('submit-alert', 'success', `✓ Update submitted! #${entry.shipped_up_to} for ${entry.variant}. Site will refresh in ~30 seconds.`);
+      document.getElementById('order-number').value = '';
+      document.getElementById('notes').value = '';
+      document.getElementById('preview').style.display = 'none';
+    } catch (err) {
+      showAlert('submit-alert', 'error', '⚠ Submission failed: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'Submit Update';
+    }
+  }
+
+  function showAlert(id, type, msg) {
+    const el = document.getElementById(id);
+    el.className = 'alert ' + type + ' show';
+    el.textContent = msg;
+    setTimeout(() => el.classList.remove('show'), 6000);
+  }
+
+  function logout() {
+    authenticated = false;
+    document.getElementById('password-input').value = '';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('login-panel').style.display = 'block';
+  }
+</script>
+</body>
+</html>

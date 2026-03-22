@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AYN Thor · Shipping Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange: #FF6B00;
+      --orange-dim: #cc5500;
+      --orange-glow: rgba(255, 107, 0, 0.25);
+      --bg: #0a0a0b;
+      --surface: #111113;
+      --surface2: #18181c;
+      --border: #2a2a30;
+      --border-hot: rgba(255,107,0,0.4);
+      --text: #e8e8e8;
+      --text-dim: #888;
+      --text-muted: #444;
+      --green: #39d98a;
+      --green-dim: rgba(57,217,138,0.15);
+      --mono: 'Share Tech Mono', monospace;
+      --head: 'Rajdhani', sans-serif;
+      --body: 'Exo 2', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── SCAN LINE ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -100%;
+      left: 0;
+      right: 0;
+      height: 200px;
+      background: linear-gradient(transparent, rgba(255,107,0,0.03), transparent);
+      animation: scan 8s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes scan { to { top: 100%; } }
+
+    .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── HEADER ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0;
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,11,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--head);
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      border: 2px solid var(--orange);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: var(--orange);
+      font-family: var(--mono);
+      box-shadow: 0 0 12px var(--orange-glow);
+    }
+    .logo span { color: var(--orange); }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+    }
+    .pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-label {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--orange);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-family: var(--head);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+      text-shadow: 0 0 30px var(--orange-glow);
+    }
+    .hero p {
+      color: var(--text-dim);
+      font-size: 0.95rem;
+      font-weight: 300;
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section { padding: 48px 0; }
+    .section + .section { border-top: 1px solid var(--border); }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .section-label h2 {
+      font-family: var(--head);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+    .section-tag {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .tag-community { background: rgba(255,107,0,0.12); color: var(--orange); border: 1px solid rgba(255,107,0,0.3); }
+    .tag-official { background: rgba(57,217,138,0.1); color: var(--green); border: 1px solid rgba(57,217,138,0.3); }
+    .tag-log { background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border); }
+
+    /* ── VARIANT CARDS ── */
+    .variants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .variant-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .variant-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--orange);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .variant-card:hover { border-color: var(--border-hot); transform: translateY(-2px); }
+    .variant-card:hover::before { opacity: 1; }
+
+    .variant-name {
+      font-family: var(--head);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .variant-number {
+      font-family: var(--mono);
+      font-size: 1.9rem;
+      color: var(--orange);
+      text-shadow: 0 0 20px var(--orange-glow);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .variant-label {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .variant-notes {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      font-style: italic;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      line-height: 1.4;
+      min-height: 32px;
+    }
+    .variant-updated {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* ── OFFICIAL SECTION ── */
+    .official-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .official-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .official-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--green);
+      opacity: 0.6;
+    }
+    .official-card:hover { border-color: rgba(57,217,138,0.3); }
+    .official-number {
+      font-family: var(--mono);
+      font-size: 1.9rem;
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(57,217,138,0.3);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .official-meta {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .official-fetch-time {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+    }
+    .official-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--green);
+      text-decoration: none;
+      border: 1px solid rgba(57,217,138,0.25);
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .official-link:hover { background: var(--green-dim); }
+
+    /* ── CHANGELOG ── */
+    .changelog { display: flex; flex-direction: column; gap: 0; }
+    .log-entry {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 0 24px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn 0.4s ease;
+    }
+    .log-entry:last-child { border-bottom: none; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+    .log-time {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding-top: 2px;
+      line-height: 1.6;
+    }
+    .log-time strong {
+      display: block;
+      color: var(--text-dim);
+      font-size: 0.78rem;
+    }
+    .log-content {}
+    .log-variant {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--orange);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .log-number {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+    .log-note {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+      font-style: italic;
+    }
+    .log-by {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .log-empty {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 24px 0;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--orange); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── LOADING / ERROR ── */
+    .loading-state {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-state {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: #f87;
+      padding: 16px;
+      background: rgba(255,100,100,0.05);
+      border: 1px solid rgba(255,100,100,0.2);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .log-entry { grid-template-columns: 1fr; gap: 4px; }
+      .variants-grid, .official-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+      .variants-grid, .official-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap header-inner">
+    <div class="logo">
+      <div class="logo-icon">AYN</div>
+      THOR <span>TRACKER</span>
+    </div>
+    <div class="status-pill">
+      <div class="pulse"></div>
+      <span id="last-updated-pill">Loading…</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">// Community Shipping Intelligence</div>
+    <h1>AYN Thor <em>Ship</em> Status</h1>
+    <p>Community-verified order number ranges, sourced from Discord and cross-referenced with AYN's official dashboard. Updated by verified community trackers.</p>
+  </div>
+
+  <!-- COMMUNITY SECTION -->
+  <section class="section">
+    <div class="section-label">
+      <h2>Community Tracker</h2>
+      <span class="section-tag tag-community">Discord Verified</span>
+    </div>
+    <div id="community-grid" class="variants-grid">
+      <div class="loading-state"><div class="spinner"></div> Loading community data…</div>
+    </div>
+  </section>
+
+  <!-- OFFICIAL SECTION -->
+  <section class="section">
+    <div class="section-label">
+      <h2>Official AYN Dashboard</h2>
+      <span class="section-tag tag-official">Auto-Fetched</span>
+    </div>
+    <div id="official-grid" class="official-grid">
+      <div class="loading-state"><div class="spinner"></div> Loading official data…</div>
+    </div>
+    <div id="official-meta" style="margin-top:16px;"></div>
+  </section>
+
+  <!-- CHANGELOG -->
+  <section class="section">
+    <div class="section-label">
+      <h2>Update History</h2>
+      <span class="section-tag tag-log">Full Log</span>
+    </div>
+    <div id="changelog" class="changelog">
+      <div class="loading-state"><div class="spinner"></div> Loading history…</div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <span>AYN Thor Shipping Tracker · Community Project · Not affiliated with AYN</span>
+  <span>
+    <a href="https://ayntec.com/pages/shipment-dashboard" target="_blank" rel="noopener">AYN Official Dashboard ↗</a>
+    &nbsp;·&nbsp;
+    <a href="admin.html">Admin</a>
+  </span>
+</footer>
+
+<script>
+  const DATA_URL = './data/community.json';
+  const OFFICIAL_URL = './data/official.json';
+
+  function fmt(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' })
+      + ' ' + d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  function fmtDate(dateStr) {
+    if (!dateStr) return '—';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function fmtTime(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  }
+
+  async function loadCommunity() {
+    const grid = document.getElementById('community-grid');
+    try {
+      const res = await fetch(DATA_URL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      // Update pill
+      document.getElementById('last-updated-pill').textContent =
+        data.last_updated ? 'Updated ' + fmt(data.last_updated) : 'No data yet';
+
+      // Variant cards
+      if (!data.variants || !data.variants.length) {
+        grid.innerHTML = '<div class="log-empty">No community data yet.</div>';
+        return;
+      }
+      grid.innerHTML = data.variants.map(v => `
+        <div class="variant-card">
+          <div class="variant-name">${v.name}</div>
+          <div class="variant-number">#${v.shipped_up_to || '—'}</div>
+          <div class="variant-label">Last confirmed shipped</div>
+          <div class="variant-notes">${v.notes || '<span style="color:var(--text-muted)">No notes</span>'}</div>
+          <div class="variant-updated">Updated ${v.updated ? fmt(v.updated) : '—'}</div>
+        </div>
+      `).join('');
+
+      // Changelog
+      const log = document.getElementById('changelog');
+      if (!data.history || !data.history.length) {
+        log.innerHTML = '<div class="log-empty">No history yet.</div>';
+        return;
+      }
+      const sorted = [...data.history].reverse();
+      log.innerHTML = sorted.map(e => `
+        <div class="log-entry">
+          <div class="log-time">
+            <strong>${fmtDate(e.timestamp)}</strong>
+            ${fmtTime(e.timestamp)}
+          </div>
+          <div class="log-content">
+            <div class="log-variant">${e.variant}</div>
+            <div class="log-number">Up to #${e.shipped_up_to}</div>
+            ${e.notes ? `<div class="log-note">${e.notes}</div>` : ''}
+            <div class="log-by">by ${e.updated_by || 'anonymous'}</div>
+          </div>
+        </div>
+      `).join('');
+
+    } catch (err) {
+      grid.innerHTML = `<div class="error-state">⚠ Could not load community data. ${err.message}</div>`;
+      console.error(err);
+    }
+  }
+
+  async function loadOfficial() {
+    const grid = document.getElementById('official-grid');
+    const meta = document.getElementById('official-meta');
+    try {
+      const res = await fetch(OFFICIAL_URL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      if (!data.variants || !data.variants.length) {
+        grid.innerHTML = '<div class="log-empty">Official data not yet fetched. GitHub Actions will populate this.</div>';
+        return;
+      }
+
+      grid.innerHTML = data.variants.map(v => `
+        <div class="official-card">
+          <div class="variant-name">${v.name}</div>
+          <div class="official-number">${v.range || '—'}</div>
+          <div class="variant-label">Order range shipped</div>
+          <div class="official-meta">Source: AYN Dashboard</div>
+        </div>
+      `).join('');
+
+      meta.innerHTML = `
+        <div class="official-fetch-time">Last fetched from AYN: ${data.fetched_at ? fmt(data.fetched_at) : '—'}</div>
+        <a class="official-link" href="https://ayntec.com/pages/shipment-dashboard" target="_blank" rel="noopener">
+          ↗ View AYN Official Dashboard
+        </a>
+      `;
+    } catch (err) {
+      grid.innerHTML = `<div class="error-state">⚠ Could not load official data. This is populated automatically by GitHub Actions.</div>`;
+    }
+  }
+
+  loadCommunity();
+  loadOfficial();
+</script>
+</body>
+</html>
