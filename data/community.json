@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-22T05:34:02.808Z",
+  "last_updated": "2026-03-22T05:34:20.675Z",
   "variants": [
     {
       "name": "Thor ⚪ Pro",
@@ -39,9 +39,9 @@
     },
     {
       "name": "Thor ⚫ Pro",
-      "shipped_up_to": null,
-      "notes": "",
-      "updated": null
+      "shipped_up_to": "1681",
+      "notes": "Discord verified",
+      "updated": "2026-03-22T05:34:20.675Z"
     },
     {
       "name": "Thor ⚫ Max",
@@ -111,6 +111,13 @@
       "notes": "Discord verified",
       "updated_by": "Tartar117",
       "timestamp": "2026-03-22T05:34:02.808Z"
+    },
+    {
+      "variant": "Thor ⚫ Pro",
+      "shipped_up_to": "1681",
+      "notes": "Discord verified",
+      "updated_by": "Tartar117",
+      "timestamp": "2026-03-22T05:34:20.675Z"
     }
   ]
 }
