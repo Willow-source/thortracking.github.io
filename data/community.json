@@ -1,16 +1,74 @@
 {
-  "last_updated": null,
+  "last_updated": "2026-03-22T05:10:23.533Z",
   "variants": [
-    { "name": "Thor ⚪ Pro", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor ⚪ Max", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor 🌈 Pro", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor 🌈 Max", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor 🟣 Pro", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor 🟣 Max", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor ⚫ Pro", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor ⚫ Max", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor ⚫ Lite", "shipped_up_to": null, "notes": "", "updated": null },
-    { "name": "Thor ⚫ Base", "shipped_up_to": null, "notes": "", "updated": null }
+    {
+      "name": "Thor ⚪ Pro",
+      "shipped_up_to": "1",
+      "notes": "Test",
+      "updated": "2026-03-22T05:10:23.533Z"
+    },
+    {
+      "name": "Thor ⚪ Max",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor 🌈 Pro",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor 🌈 Max",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor 🟣 Pro",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor 🟣 Max",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor ⚫ Pro",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor ⚫ Max",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor ⚫ Lite",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    },
+    {
+      "name": "Thor ⚫ Base",
+      "shipped_up_to": null,
+      "notes": "",
+      "updated": null
+    }
   ],
-  "history": []
+  "history": [
+    {
+      "variant": "Thor ⚪ Pro",
+      "shipped_up_to": "1",
+      "notes": "Test",
+      "updated_by": "Tartar117",
+      "timestamp": "2026-03-22T05:10:23.533Z"
+    }
+  ]
 }
