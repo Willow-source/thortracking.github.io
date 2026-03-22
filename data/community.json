@@ -1,30 +1,16 @@
 {
   "last_updated": null,
   "variants": [
-    {
-      "name": "White Max",
-      "shipped_up_to": null,
-      "notes": "",
-      "updated": null
-    },
-    {
-      "name": "Black Pro",
-      "shipped_up_to": null,
-      "notes": "",
-      "updated": null
-    },
-    {
-      "name": "White Pro",
-      "shipped_up_to": null,
-      "notes": "",
-      "updated": null
-    },
-    {
-      "name": "Black Standard",
-      "shipped_up_to": null,
-      "notes": "",
-      "updated": null
-    }
+    { "name": "Thor ⚪ Pro", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor ⚪ Max", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor 🌈 Pro", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor 🌈 Max", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor 🟣 Pro", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor 🟣 Max", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor ⚫ Pro", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor ⚫ Max", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor ⚫ Lite", "shipped_up_to": null, "notes": "", "updated": null },
+    { "name": "Thor ⚫ Base", "shipped_up_to": null, "notes": "", "updated": null }
   ],
   "history": []
 }
