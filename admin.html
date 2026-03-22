@@ -65,7 +65,6 @@
     }
     .back:hover { color: var(--orange); }
 
-    /* Login panel */
     #login-panel {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -157,12 +156,6 @@
     .alert.error { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.3); color: var(--red); }
     .alert.success { background: rgba(57,217,138,0.08); border: 1px solid rgba(57,217,138,0.3); color: var(--green); }
     .alert.show { display: block; }
-
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 28px 0;
-    }
 
     .field-group {
       background: var(--surface2);
@@ -289,30 +282,22 @@
       <strong>How this works:</strong><br />
       Your update is sent via the Cloudflare Worker to the GitHub repo's <code>data/community.json</code> file. The site rebuilds automatically within ~30 seconds. Make sure order numbers are verified before submitting — check the pinned messages in Discord's shipping channel.
       <br /><br />
-      <strong>Not working?</strong> Contact the repo owner on <a href="https://github.com/Tartarsause117/thor-tracker" target="_blank">GitHub</a>.
+      <strong>Not working?</strong> Contact the repo owner on <a href="https://github.com/willow-source/thortracking.github.io" target="_blank">GitHub</a>.
     </div>
   </div>
 </div>
 
 <script>
   // ─── CONFIGURATION ────────────────────────────────────────────────
-  // Set your Cloudflare Worker URL here after deploying
-  const WORKER_URL = 'https://YOUR_WORKER.YOUR_SUBDOMAIN.workers.dev/update';
-
-  // Secret URL token (optional extra layer) — set to '' to disable
-  // If set, the URL must include ?token=YOUR_SECRET_TOKEN
-  const URL_TOKEN = 'CHANGE_THIS_SECRET_URL_TOKEN';
-
-  // Admin password (hashed with SHA-256, set via worker env var ideally)
-  // This is a fallback client-side check only — real auth is in the Worker
-  const ADMIN_PASSWORD_HASH = 'REPLACE_WITH_SHA256_OF_YOUR_PASSWORD';
+  const WORKER_URL = 'https://REPLACE_WITH_YOUR_WORKER_URL/update';
+  const URL_TOKEN  = 'fC3JR49ZbbqKyngJ';
+  const ADMIN_PASSWORD_HASH = 'df6fadca0a2ba94d6bc87a75cba9042639cbee4da84a2b6ca14f89720c467db4';
   // ─────────────────────────────────────────────────────────────────
 
   let authenticated = false;
 
   // Check secret URL token on load
   (function checkToken() {
-    if (!URL_TOKEN) return; // disabled
     const params = new URLSearchParams(window.location.search);
     if (params.get('token') !== URL_TOKEN) {
       document.body.innerHTML = '<div style="display:flex;height:100vh;align-items:center;justify-content:center;font-family:monospace;color:#444;font-size:0.8rem;">404 Not Found</div>';
@@ -327,7 +312,6 @@
   async function attemptLogin() {
     const pw = document.getElementById('password-input').value.trim();
     if (!pw) return showAlert('login-alert', 'error', 'Enter a password.');
-
     const hash = await sha256(pw);
     if (hash !== ADMIN_PASSWORD_HASH) {
       showAlert('login-alert', 'error', 'Incorrect password.');
@@ -342,17 +326,13 @@
     if (e.key === 'Enter' && !authenticated) attemptLogin();
   });
 
-  // Live preview
   ['variant','order-number','discord-user','notes'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', updatePreview);
   });
 
   function updatePreview() {
     const entry = buildEntry();
-    if (!entry.shipped_up_to) {
-      document.getElementById('preview').style.display = 'none';
-      return;
-    }
+    if (!entry.shipped_up_to) { document.getElementById('preview').style.display = 'none'; return; }
     document.getElementById('preview').style.display = 'block';
     document.getElementById('preview-content').textContent = JSON.stringify(entry, null, 2);
   }
@@ -370,7 +350,6 @@
   async function submitUpdate() {
     if (!authenticated) return;
     const entry = buildEntry();
-
     if (!entry.updated_by) return showAlert('submit-alert', 'error', 'Discord username required.');
     if (!entry.shipped_up_to) return showAlert('submit-alert', 'error', 'Order number required.');
 
@@ -379,10 +358,11 @@
     btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
 
     try {
+      const hash = await sha256(document.getElementById('password-input')?.value || '');
       const res = await fetch(WORKER_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(entry)
+        body: JSON.stringify({ ...entry, password_hash: hash })
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Worker returned ' + res.status);
