@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-03-24T23:32:44.550369+00:00",
+  "fetched_at": "2026-03-25T02:11:46.175071+00:00",
   "source": "https://www.ayntec.com/pages/shipment-dashboard",
   "variants": [
     {
@@ -34,13 +34,13 @@
     },
     {
       "name": "Thor ⚫ Pro",
-      "range": "1647xx – 1681xx",
-      "batch_date": "2026/3/13"
+      "range": "1647xx – 1741xx",
+      "batch_date": "2026/3/24"
     },
     {
       "name": "Thor ⚫ Max",
-      "range": "1545xx – 1588xx",
-      "batch_date": "2026/3/20"
+      "range": "1588xx – 1619xx",
+      "batch_date": "2026/3/24"
     },
     {
       "name": "Thor ⚫ Lite",
