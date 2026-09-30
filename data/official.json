@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-09-30T01:08:04.119588+00:00",
+  "fetched_at": "2026-09-30T08:04:09.876430+00:00",
   "source": "https://www.ayntec.com/pages/shipment-dashboard",
   "variants": [
     {
@@ -49,8 +49,8 @@
     },
     {
       "name": "Thor ⚫ Base",
-      "range": "2852xx – 2890xx",
-      "batch_date": "2026/9/22"
+      "range": "2890xx – 2952xx",
+      "batch_date": "2026/9/29"
     }
   ]
 }
